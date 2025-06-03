@@ -3,6 +3,16 @@ from google.oauth2.service_account import Credentials
 import streamlit as st
 import pandas as pd
 import os
+import sys
+import subprocess
+
+# Ensure required dependencies are installed
+required_packages = ["streamlit", "gspread", "google-auth", "pandas"]
+for package in required_packages:
+    try:
+        __import__(package)
+    except ImportError:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 # Authenticate and connect to Google Sheets
 def connect_to_gsheet(creds_json, spreadsheet_name, sheet_name):
