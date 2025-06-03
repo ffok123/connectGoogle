@@ -15,26 +15,34 @@ for package in required_packages:
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 # Authenticate and connect to Google Sheets
-def connect_to_gsheet(creds_json, spreadsheet_name, sheet_name):
+def connect_to_gsheet(spreadsheet_name, sheet_name):
     try:
-        if not os.path.exists(creds_json):
-            raise FileNotFoundError(f"Credentials file not found: {creds_json}")
+        # Load credentials from Streamlit secrets
+        creds_dict = {
+            "type": st.secrets["type"],
+            "project_id": st.secrets["project_id"],
+            "private_key_id": st.secrets["private_key_id"],
+            "private_key": st.secrets["private_key"].replace("\\n", "\n"),
+            "client_email": st.secrets["client_email"],
+            "client_id": st.secrets["client_id"],
+            "auth_uri": st.secrets["auth_uri"],
+            "token_uri": st.secrets["token_uri"],
+            "auth_provider_x509_cert_url": st.secrets["auth_provider_x509_cert_url"],
+            "client_x509_cert_url": st.secrets["client_x509_cert_url"]
+        }
         
         scope = ["https://spreadsheets.google.com/feeds", 
                  'https://www.googleapis.com/auth/spreadsheets',
                  "https://www.googleapis.com/auth/drive.file", 
                  "https://www.googleapis.com/auth/drive"]
         
-        credentials = Credentials.from_service_account_file(creds_json, scopes=scope)
+        credentials = Credentials.from_service_account_info(creds_dict, scopes=scope)
         client = gspread.authorize(credentials)
         
         try:
             spreadsheet = client.open(spreadsheet_name)  # Access the spreadsheet
-        except gspread.exceptions.APIError as e:
-            st.error("Google Drive API is not enabled or permissions are missing. "
-                     "Enable the API at https://console.developers.google.com/apis/api/drive.googleapis.com/overview "
-                     "and ensure the service account has access to the spreadsheet.")
-            raise e
+        except gspread.exceptions.SpreadsheetNotFound:
+            raise ValueError(f"Spreadsheet '{spreadsheet_name}' not found. Check the name.")
         
         try:
             worksheet = spreadsheet.worksheet(sheet_name)  # Access specific sheet by name
@@ -49,10 +57,9 @@ def connect_to_gsheet(creds_json, spreadsheet_name, sheet_name):
 # Google Sheet credentials and details
 SPREADSHEET_NAME = 'Streamlit'
 SHEET_NAME = 'Sheet1'
-CREDENTIALS_FILE = './credentials.json'
 
 # Connect to the Google Sheet
-sheet_by_name = connect_to_gsheet(CREDENTIALS_FILE, SPREADSHEET_NAME, sheet_name=SHEET_NAME)
+sheet_by_name = connect_to_gsheet(SPREADSHEET_NAME, sheet_name=SHEET_NAME)
 
 st.title("Simple Data Entry using Streamlit")
 
@@ -72,7 +79,7 @@ with st.sidebar:
         name = st.text_input("Name")
         money = st.number_input("Money", min_value=0, max_value=8000)
         
-        date = st.date_input("Date", value=None)  # Use date picker for selecting the date
+        date = st.date_input("Date")  # Use date picker for selecting the date
         comment = st.text_input("Comments")
         submitted = st.form_submit_button("Submit")
         # Handle form submission

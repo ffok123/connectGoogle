@@ -26,6 +26,7 @@ Thumbs.db          # Windows specific file
 
 # Credentials and sensitive files
 credentials.json
+.streamlit/secrets.toml # Crucial for Streamlit if you use it locally
 client_secret.json # Another common name for credentials
 .env               # Environment variable files (e.g., for python-dotenv)
 .flaskenv
