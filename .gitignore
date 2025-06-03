@@ -1,0 +1,42 @@
+# Python
+*.pyc
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Virtual Environment
+.venv/
+venv/
+env/
+/lib/
+/include/
+/bin/
+
+# IDE specific files
+.idea/             # PyCharm, IntelliJ IDEA
+.vscode/           # VS Code
+*.iml              # IntelliJ IDEA module files
+.DS_Store          # macOS specific file
+Thumbs.db          # Windows specific file
+
+# Database files
+*.sqlite3
+*.db
+
+# Credentials and sensitive files
+credentials.json
+client_secret.json # Another common name for credentials
+.env               # Environment variable files (e.g., for python-dotenv)
+.flaskenv
+*.pem              # Private key files
+*.key              # Other key files
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# Logs and temporary files
+*.log
+*.tmp
