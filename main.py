@@ -2,17 +2,6 @@ import gspread
 from google.oauth2.service_account import Credentials
 import streamlit as st
 import pandas as pd
-import os
-import sys
-import subprocess
-
-# Ensure required dependencies are installed
-required_packages = ["streamlit", "gspread", "google-auth", "pandas"]
-for package in required_packages:
-    try:
-        __import__(package)
-    except ImportError:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 # Authenticate and connect to Google Sheets
 def connect_to_gsheet(spreadsheet_name, sheet_name):
@@ -32,7 +21,7 @@ def connect_to_gsheet(spreadsheet_name, sheet_name):
         }
         
         scope = ["https://spreadsheets.google.com/feeds", 
-                 'https://www.googleapis.com/auth/spreadsheets',
+                 "https://www.googleapis.com/auth/spreadsheets",
                  "https://www.googleapis.com/auth/drive.file", 
                  "https://www.googleapis.com/auth/drive"]
         
@@ -59,18 +48,29 @@ SPREADSHEET_NAME = 'Streamlit'
 SHEET_NAME = 'Sheet1'
 
 # Connect to the Google Sheet
-sheet_by_name = connect_to_gsheet(SPREADSHEET_NAME, sheet_name=SHEET_NAME)
+try:
+    sheet_by_name = connect_to_gsheet(SPREADSHEET_NAME, sheet_name=SHEET_NAME)
+except Exception as e:
+    st.error(f"Failed to connect to Google Sheets: {e}")
+    sheet_by_name = None  # Ensure the program doesn't crash
 
 st.title("Simple Data Entry using Streamlit")
 
 # Read Data from Google Sheets
 def read_data():
-    data = sheet_by_name.get_all_records()  # Get all records from Google Sheet
-    return pd.DataFrame(data)
+    if sheet_by_name:
+        data = sheet_by_name.get_all_records()  # Get all records from Google Sheet
+        return pd.DataFrame(data)
+    else:
+        st.error("Unable to read data. Google Sheets connection failed.")
+        return pd.DataFrame()
 
 # Add Data to Google Sheets
 def add_data(row):
-    sheet_by_name.append_row(row)  # Append the row to the Google Sheet
+    if sheet_by_name:
+        sheet_by_name.append_row(row)  # Append the row to the Google Sheet
+    else:
+        st.error("Unable to add data. Google Sheets connection failed.")
 
 # Sidebar form for data entry
 with st.sidebar:
@@ -78,7 +78,6 @@ with st.sidebar:
     with st.form(key="data_form"):
         name = st.text_input("Name")
         money = st.number_input("Money", min_value=0, max_value=8000)
-        
         date = st.date_input("Date")  # Use date picker for selecting the date
         comment = st.text_input("Comments")
         submitted = st.form_submit_button("Submit")
@@ -92,6 +91,6 @@ with st.sidebar:
                 st.error("Please fill out the form correctly.")
 
 # Display data in the main view
-st.header("Money Given to mother")
+st.header("Money Given to Mother")
 df = read_data()
 st.dataframe(df, width=800, height=500)
