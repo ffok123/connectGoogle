@@ -78,7 +78,7 @@ with st.sidebar:
     with st.form(key="data_form"):
         #name = st.text_input("Name")
         names = ["Fanny", "Lun", "Yee", "Ping", "Fong"]
-        name = st.selectbox("Name", name)
+        name = st.selectbox("Name", names)
 
         
         money = st.number_input("Money", min_value=0, max_value=8000)
