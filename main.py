@@ -77,7 +77,7 @@ with st.sidebar:
     st.header("Enter New Amount given to Mother")
     with st.form(key="data_form"):
         #name = st.text_input("Name")
-        names = ["Fanny", "Lun", "Yee", "Ping", "Fong"]
+        names = ["Please choose:","Fanny", "Lun", "Yee", "Ping", "Fong"]
         name = st.selectbox("Name", names)
 
         
