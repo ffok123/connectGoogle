@@ -76,7 +76,11 @@ def add_data(row):
 with st.sidebar:
     st.header("Enter New Amount given to Mother")
     with st.form(key="data_form"):
-        name = st.text_input("Name")
+        #name = st.text_input("Name")
+        names = ["Fanny", "Lun", "Yee", "Ping", "Fong"]
+        name = st.selectbox("Name", name)
+
+        
         money = st.number_input("Money", min_value=0, max_value=8000)
         date = st.date_input("Date")  # Use date picker for selecting the date
         comment = st.text_input("Comments")
