@@ -79,9 +79,10 @@ with st.sidebar:
         #name = st.text_input("Name")
         names = ["Please choose:","Fanny", "Lun", "Yee", "Ping", "Fong"]
         name = st.selectbox("Name", names)
-
+        moneys = ["Please choose:",100,200,300,400,500,600,700,800,900,1000,2000,3000]
+        money = st.selectbox("Money", moneys)
         
-        money = st.number_input("Money", min_value=0, max_value=8000)
+        #money = st.number_input("Money", min_value=0, max_value=8000)
         date = st.date_input("Date")  # Use date picker for selecting the date
         comment = st.text_input("Comments")
         submitted = st.form_submit_button("Submit")
